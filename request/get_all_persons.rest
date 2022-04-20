@@ -9,3 +9,13 @@ GET http://localhost:3001/api/persons/2
 
 ### delete person
 DELETE http://localhost:3001/api/persons/3
+
+### post person
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "test",
+    "number": "111222"
+}
