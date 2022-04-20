@@ -26,11 +26,11 @@ let persons = [
     }
 ]
 
-app.get("/api/persons", (request,response) => {
+app.get("/api/persons", (request, response) => {
     response.json(persons)
 })
 
-app.get("/info", (request,response) => {
+app.get("/info", (request, response) => {
     const info = `Phonebook has info for ${persons.length} people`
     const date = new Date()
     response.send(`<div><p>${info}<p/><p>${date}<p/><div/>`)
@@ -39,7 +39,7 @@ app.get("/info", (request,response) => {
 app.get("/api/persons/:id", (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
-    if(person) {
+    if (person) {
         response.json(person)
     } else {
         response.status(404).end()
@@ -53,11 +53,21 @@ app.delete("/api/persons/:id", (request, response) => {
 })
 
 const generateId = () => {
-    return Math.floor(Math.random()*100000)
+    return Math.floor(Math.random() * 100000)
 }
 
-app.post("/api/persons", (request,response) => {
-    const body= request.body
+app.post("/api/persons", (request, response) => {
+    const body = request.body
+    if (!(body.name && body.number)) {
+        return response.status(400).json({ error: "missing name or number" })
+    }
+
+    const isUnique = persons.filter(p =>
+        p.name.toLowerCase() === body.name.toLowerCase()).length === 0
+    if (!isUnique) {
+        return response.status(400).json({ error: "name must be unique" })
+    }
+
     const person = {
         name: body.name,
         number: body.number,
