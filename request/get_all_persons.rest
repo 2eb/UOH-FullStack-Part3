@@ -1,7 +1,11 @@
+### get persons
 GET http://localhost:3001/api/persons
 
-###
+### get info
 GET http://localhost:3001/info
 
-###
-GET http://localhost:3001/api/persons/5
+### get person
+GET http://localhost:3001/api/persons/2
+
+### delete person
+DELETE http://localhost:3001/api/persons/3
