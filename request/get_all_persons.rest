@@ -11,11 +11,19 @@ GET http://localhost:3001/api/persons/2
 DELETE http://localhost:3001/api/persons/3
 
 ### post person
-
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "TesT",
+    "name": "tesT",
+    "number": "111111"
+}
+
+### request made to non-existent route
+POST http://localhost:3001/api/persons/person
+Content-Type: application/json
+
+{
+    "name": "tesT",
     "number": "111111"
 }
