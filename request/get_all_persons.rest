@@ -27,3 +27,38 @@ Content-Type: application/json
     "name": "tesT",
     "number": "111111"
 }
+
+
+#######################################################################
+
+
+### heroku get persons
+
+GET https://zeb-phonebook.herokuapp.com/api/persons
+
+### heroku get info
+GET https://zeb-phonebook.herokuapp.com/info
+
+### heroku get person
+GET https://zeb-phonebook.herokuapp.com/api/persons/2
+
+### heroku delete person
+DELETE https://zeb-phonebook.herokuapp.com/api/persons/3
+
+### heroku post person
+POST https://zeb-phonebook.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "tesT",
+    "number": "111111"
+}
+
+### heroku request made to non-existent route
+POST https://zeb-phonebook.herokuapp.com/api/persons/person
+Content-Type: application/json
+
+{
+    "name": "tesT",
+    "number": "111111"
+}
