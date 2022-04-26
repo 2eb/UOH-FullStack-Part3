@@ -1,2 +1,8 @@
 #dependencies
 node_modules
+
+#environment file
+.env
+
+#dev utility files
+mongo.js

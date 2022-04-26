@@ -15,8 +15,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "tesT",
-    "number": "111111"
+    "name": "hermione",
+    "number": "555555"
 }
 
 ### request made to non-existent route
