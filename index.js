@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static("build"))
 
-morgan.token("body", (req,res) => JSON.stringify(req.body))
+morgan.token("body", (req, res) => JSON.stringify(req.body))
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
 app.get("/api/persons", (request, response) => {
@@ -19,49 +19,59 @@ app.get("/api/persons", (request, response) => {
 })
 
 app.get("/info", (request, response) => {
-    const info = `Phonebook has info for ${persons.length} people`
-    const date = new Date()
-    response.send(`<div><p>${info}<p/><p>${date}<p/><div/>`)
+ 
+    Person.estimatedDocumentCount({})
+    .then(count => {
+        const info = `Phonebook has info for ${count} people`
+        const date = new Date()
+        response.send(`<div><p>${info}<p/><p>${date}<p/><div/>`)
+    })
 })
 
 app.get("/api/persons/:id", (request, response) => {
     Person.findById(request.params.id).then(person => {
         response.json(person)
     }).catch(e => {
-        response.status(404).json({error: e.message})
+        response.status(404).json({ error: e.message })
     })
 })
 
 app.delete("/api/persons/:id", (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
-    .then(result => {
-        response.status(204).end()
-    })
-    .catch(error => next(error))
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
     const body = request.body
     if (!(body.name && body.number)) {
         return response.status(400).json({ error: "missing name or number" })
     }
 
-    // const isUnique = persons.filter(p =>
-    //     p.name.toLowerCase() === body.name.toLowerCase()).length === 0
-    // if (!isUnique) {
-    //     return response.status(400).json({ error: "name must be unique" })
-    // }
-
     const person = new Person({
-        name: body.name,
+        name: body.name.toLowerCase(),
         number: body.number,
     })
 
-    console.log(person)
+    person.save()
+        .then(savedPerson =>
+            response.json(savedPerson)
+        )
+        .catch(error => next(error)
+        )
+})
 
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
-    })
+app.put("/api/persons/:id", (req, res, next) => {
+    const body = req.body
+
+    Person.findByIdAndUpdate(req.params.id, { number: body.number }, { new: true })
+        .then(updatedPerson =>
+            res.json(updatedPerson)
+        )
+        .catch(error => next(error)
+        )
 })
 
 const unknownEndpoint = (request, response) => {
@@ -74,7 +84,7 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message);
 
     if (error.name === "CastError") {
-        return response.status(400).send({error: "malformed id"})
+        return response.status(400).send({ error: "malformed id" })
     }
     next(error)
 }

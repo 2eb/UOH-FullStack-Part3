@@ -5,7 +5,7 @@ GET http://localhost:3001/api/persons
 GET http://localhost:3001/info
 
 ### get person
-GET http://localhost:3001/api/persons/2
+GET http://localhost:3001/api/persons/6267a20a4b3bcf96dfe421ad
 
 ### delete person
 DELETE http://localhost:3001/api/persons/3
@@ -15,8 +15,17 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "hermione",
-    "number": "555555"
+    "name": "SOPHY",
+    "number": "222222"
+}
+
+### update person
+PUT http://localhost:3001/api/persons/6267a20a4b3bcf96dfe421ad
+Content-Type: application/json
+
+{
+    "name": "wizard Howl",
+    "number": "999999"
 }
 
 ### request made to non-existent route
