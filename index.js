@@ -51,7 +51,7 @@ app.post("/api/persons", (request, response, next) => {
     }
 
     const person = new Person({
-        name: body.name.toLowerCase(),
+        name: body.name,
         number: body.number,
     })
 
