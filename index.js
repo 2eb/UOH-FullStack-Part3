@@ -19,13 +19,13 @@ app.get("/api/persons", (request, response) => {
 })
 
 app.get("/info", (request, response) => {
- 
+
     Person.estimatedDocumentCount({})
-    .then(count => {
-        const info = `Phonebook has info for ${count} people`
-        const date = new Date()
-        response.send(`<div><p>${info}<p/><p>${date}<p/><div/>`)
-    })
+        .then(count => {
+            const info = `Phonebook has info for ${count} people`
+            const date = new Date()
+            response.send(`<div><p>${info}<p/><p>${date}<p/><div/>`)
+        })
 })
 
 app.get("/api/persons/:id", (request, response) => {
@@ -45,28 +45,34 @@ app.delete("/api/persons/:id", (request, response, next) => {
 })
 
 app.post("/api/persons", (request, response, next) => {
-    const body = request.body
-    if (!(body.name && body.number)) {
-        return response.status(400).json({ error: "missing name or number" })
-    }
+    const { name, number } = request.body
+    Person.find({ name }).then(person => {
+        if (person.length>0) {
+            console.log("inside person",person)
+            response.status(400).send({ error: "duplicate entry" })
+        } else {
+            const person = new Person({
+                name: name,
+                number: number,
+            })
 
-    const person = new Person({
-        name: body.name,
-        number: body.number,
+            person.save()
+                .then(savedPerson =>
+                    response.json(savedPerson)
+                )
+                .catch(error => next(error)
+                )
+        }
     })
-
-    person.save()
-        .then(savedPerson =>
-            response.json(savedPerson)
-        )
-        .catch(error => next(error)
-        )
 })
 
 app.put("/api/persons/:id", (req, res, next) => {
-    const body = req.body
+    const { number } = req.body
 
-    Person.findByIdAndUpdate(req.params.id, { number: body.number }, { new: true })
+    Person.findByIdAndUpdate(
+        req.params.id, { number },
+        { new: true, runValidators: true, context: "query" }
+    )
         .then(updatedPerson =>
             res.json(updatedPerson)
         )
@@ -85,6 +91,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === "CastError") {
         return response.status(400).send({ error: "malformed id" })
+    } else if (error.name === "ValidationError") {
+        return response.status(400).json({ error: error.message })
     }
     next(error)
 }
